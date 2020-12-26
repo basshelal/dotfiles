@@ -240,6 +240,9 @@ alias y='ytdlq'
 
 alias psa='ps -A'
 
+alias cp='cp -iv'
+alias cpf='yes | cp -f'
+
 NOTES_DIR=~/docs/notes/
 
 note() {
