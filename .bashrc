@@ -189,6 +189,13 @@ alias fp='flatpak'
 alias c='clear'
 alias x='exit'
 
+# home dirs
+alias ~='d ~'
+alias apps='d ~/apps'
+alias dls='d ~/dls'
+alias docs='d ~/docs'
+alias bashrc='open ~/.bashrc'
+
 # dir navigation
 alias ~='d ~'
 alias .1='d ../'
