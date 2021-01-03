@@ -91,15 +91,6 @@ fi
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -118,8 +109,12 @@ printPlatform() {
     if [[ ! -z $(isDeb) ]]; then echo "Debian"; fi
     if [[ ! -z $(isArch) ]]; then echo "Arch"; fi
 }
-l() { ls -aAF "$@" && cnt "$@"; }
-d() { cd "$@" && l; }
+l() {
+    ls -aAF "$@" && cnt "$@"
+}
+d() {
+    cd "$@" && l
+}
 f() {
     nautilus "$PWD" &>/dev/null 2>/dev/null &
     disown
@@ -134,7 +129,6 @@ open() {
         disown
     done
 }
-alias o='open'
 mkfl() {
     dir="$(pwd)/$(dirname "$*")"
     fl="$(pwd)/"$*""
@@ -152,16 +146,26 @@ upgrade() {
     fi
 }
 install() {
+    if [ $# -eq 0 ]; then
+        echo "Nothing to install"
+        return
+    fi
     if [[ ! -z $(isDeb) ]]; then
         sudo apt install "$@" -y
     fi
 }
 remove() {
+    if [ $# -eq 0 ]; then
+        echo "Nothing to remove"
+        return
+    fi
     if [[ ! -z $(isDeb) ]]; then
         sudo apt purge "$@" -y && sudo apt autoremove -y
     fi
 }
-mkdr() { mkdir -p "$*" && d "$*"; }
+mkdr() {
+    mkdir -p "$*" && d "$*"
+}
 myip() {
     curl ifconfig.me
     newline
@@ -175,15 +179,19 @@ vpnd() {
     vpn d
     myip
 }
+vpnr() {
+    myip
+    vpnd
+    sleep 1s
+    vpnc
+}
 cnt() {
     echo "----------------"
-    echo "total: $(ls -aA "$@" | wc -l)"
+    echo "total: $(ls -A "$@" | wc -l)"
 }
 newline() {
     echo # newline
 }
-
-alias fp='flatpak'
 
 # terminal
 alias c='clear'
@@ -197,7 +205,6 @@ alias docs='d ~/docs'
 alias bashrc='open ~/.bashrc'
 
 # dir navigation
-alias ~='d ~'
 alias .1='d ../'
 alias ..='d ../'
 alias .2='d ../../'
@@ -210,13 +217,15 @@ alias .5='d ../../../../../'
 alias ......='d ../../../../../'
 
 # git
-alias g='git'
 commit() {
     git add .
     git commit -m "$*"
 }
 push() {
     git push -u origin master
+}
+pull() {
+    git pull origin master
 }
 commit-push() {
     commit "$*" && push
@@ -234,21 +243,22 @@ alias reboot='sudo reboot'
 alias shutdown='sudo shutdown'
 
 # ytdl
-alias ytdl='youtube-dl'
+alias ytdl='youtube-dl -i'
 alias ytdlu='sudo youtube-dl -U'
-alias ytdlmp3='youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail -o "~/Music/%(title)s-%(creator)s.%(ext)s" --cookies ~/Documents/youtube.com-cookies.txt'
-alias ytdlflac='youtube-dl --extract-audio --audio-format flac --audio-quality 0 -o "~/Music/%(title)s-%(creator)s.%(ext)s" --cookies ~/Documents/youtube.com-cookies.txt'
+alias ytdlmp3='youtube-dl -i --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail -o "~/Music/%(title)s-%(creator)s.%(ext)s" --cookies ~/Documents/youtube.com-cookies.txt'
+alias ytdlflac='youtube-dl -i --extract-audio --audio-format flac --audio-quality 0 -o "~/Music/%(title)s-%(creator)s.%(ext)s" --cookies ~/Documents/youtube.com-cookies.txt'
 ytdlq() {
-    youtube-dl -q "$@" &>/dev/null 2>/dev/null &
+    youtube-dl -i -q "$@" &>/dev/null 2>/dev/null &
     disown
 }
-
 alias y='ytdlq'
 
 alias psa='ps -A'
 
 alias cp='cp -iv'
 alias cpf='yes | cp -f'
+
+alias lc='wc -l'
 
 NOTES_DIR=~/docs/notes/
 
@@ -260,4 +270,31 @@ note() {
 
 notes() {
     d $NOTES_DIR
+}
+
+countof() {
+    psa | grep "$*" | lc
+}
+
+watch-bash() {
+    watch bash -i -c \""$*"\"
+}
+
+dut() {
+    du -ch "$@" | grep total
+}
+
+killall-chrome-tabs() {
+    pgrep -f -a 'chrome' |
+        grep 'type=renderer' |
+        grep -v "extension" |
+        egrep -o '^[0-9]{0,}' |
+        while read pid; do
+            kill $pid
+            echo "Killed $pid"
+        done
+}
+
+sizeof() {
+    du -sbh --si $@
 }
