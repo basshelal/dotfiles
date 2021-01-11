@@ -102,6 +102,9 @@ if ! shopt -oq posix; then
     fi
 fi
 
+echo-error() {
+    echo -e "\033[0;31m"$*"\033[0m"
+}
 isDeb() { command -v apt; }
 isArch() { command -v pacman; }
 hasFlatpak() { command -v flatpak; }
@@ -121,6 +124,9 @@ f() {
 }
 t() {
     alacritty --working-directory $PWD &>/dev/null 2>/dev/null &
+    disown
+}
+p() {
     disown
 }
 open() {
@@ -147,7 +153,7 @@ upgrade() {
 }
 install() {
     if [ $# -eq 0 ]; then
-        echo "Nothing to install"
+        echo-error "Error: Nothing to install"
         return
     fi
     if [[ ! -z $(isDeb) ]]; then
@@ -156,7 +162,7 @@ install() {
 }
 remove() {
     if [ $# -eq 0 ]; then
-        echo "Nothing to remove"
+        echo-error "Error: Nothing to remove"
         return
     fi
     if [[ ! -z $(isDeb) ]]; then
@@ -269,7 +275,7 @@ note() {
 }
 
 notes() {
-    d $NOTES_DIR
+    l $NOTES_DIR
 }
 
 countof() {
@@ -296,5 +302,14 @@ killall-chrome-tabs() {
 }
 
 sizeof() {
-    du -sbh --si $@
+    du -sbh --si "$@"
 }
+
+mkscript() {
+    fl="$(pwd)/"$*""
+    mkfl "$*"
+    chmod +x "$fl"
+    echo "# /bin/sh" >"$fl"
+}
+
+export PATH="$HOME/bin:$PATH"
