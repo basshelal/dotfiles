@@ -102,9 +102,6 @@ if ! shopt -oq posix; then
     fi
 fi
 
-echo-error() {
-    echo -e "\033[0;31m"$*"\033[0m"
-}
 isDeb() { command -v apt; }
 isArch() { command -v pacman; }
 hasFlatpak() { command -v flatpak; }
@@ -129,12 +126,6 @@ t() {
 p() {
     disown
 }
-open() {
-    for file in "$@"; do
-        xdg-open "$file" &>/dev/null 2>/dev/null &
-        disown
-    done
-}
 mkfl() {
     dir="$(pwd)/$(dirname "$*")"
     fl="$(pwd)/"$*""
@@ -142,6 +133,10 @@ mkfl() {
 }
 del() {
     trash-put "$@" && l
+}
+alias move='/usr/bin/mv'
+mv() {
+    move -vn "$@" && l
 }
 upgrade() {
     if [[ ! -z $(isDeb) ]]; then
@@ -169,6 +164,20 @@ remove() {
         sudo apt purge "$@" -y && sudo apt autoremove -y
     fi
 }
+search() {
+    echo "apt packages:"
+    sudo apt search "$*"
+    newline
+    echo "flatpak packages"
+    flatpak search "$*"
+}
+list() {
+    echo "apt packages:"
+    sudo apt list "$@"
+    newline
+    echo "flatpak packages"
+    flatpak list "$@"
+}
 mkdr() {
     mkdir -p "$*" && d "$*"
 }
@@ -194,9 +203,6 @@ vpnr() {
 cnt() {
     echo "----------------"
     echo "total: $(ls -A "$@" | wc -l)"
-}
-newline() {
-    echo # newline
 }
 
 # terminal
@@ -240,8 +246,6 @@ commit-push() {
 # packages
 alias i='install'
 alias r='remove'
-alias list='sudo apt list'
-alias search='sudo apt search'
 alias autoremove='sudo apt autoremove'
 
 # power
@@ -264,8 +268,6 @@ alias psa='ps -A'
 alias cp='cp -iv'
 alias cpf='yes | cp -f'
 
-alias lc='wc -l'
-
 NOTES_DIR=~/docs/notes/
 
 note() {
@@ -278,38 +280,15 @@ notes() {
     l $NOTES_DIR
 }
 
-countof() {
-    psa | grep "$*" | lc
-}
-
-watch-bash() {
-    watch bash -i -c \""$*"\"
-}
-
 dut() {
     du -ch "$@" | grep total
-}
-
-killall-chrome-tabs() {
-    pgrep -f -a 'chrome' |
-        grep 'type=renderer' |
-        grep -v "extension" |
-        egrep -o '^[0-9]{0,}' |
-        while read pid; do
-            kill $pid
-            echo "Killed $pid"
-        done
-}
-
-sizeof() {
-    du -sbh --si "$@"
 }
 
 mkscript() {
     fl="$(pwd)/"$*""
     mkfl "$*"
     chmod +x "$fl"
-    echo "# /bin/sh" >"$fl"
+    echo "#!/usr/bin/env bash" >"$fl"
 }
 
 export PATH="$HOME/bin:$PATH"

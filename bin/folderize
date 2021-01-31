@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# use nullglob in case there are no matching files
+shopt -s nullglob
+
+files=(./*.mp4)
+for index in ${!files[*]}; do
+    file="${files[index]}"
+    filename="${file%.*}"
+    dir="$(dirname "$file")"
+    if [[ ! -d "./"$dir"/"$filename"" ]]; then
+        mkdir -p "./"$dir"/"$filename""
+        mv "$file" "./"$dir"/"$filename"/"$file""
+        mv "$file.jpg" "./"$dir"/"$filename"/"$file".jpg"
+        echo "Moved $filename"
+    fi
+done
+
+echo "Finished!"
+
+# for dir in */; do pushd "$dir"; folderize; popd; done

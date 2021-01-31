@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+
+cp -r ~/bin ./
 cp ~/.bashrc ./
 cp -r ~/.ssh/ ./
 rm ./.ssh/known_hosts

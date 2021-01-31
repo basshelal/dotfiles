@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+for file in $(find); do
+    if [[ -f "$file" ]]; then
+        mv -vn "$file" "./"
+    fi
+done

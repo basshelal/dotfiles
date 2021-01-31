@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+type="$1"
+
+mkdir -p ./processed
+mkdir -p ./del
+
+for file in *."$type"; do
+    filename="${file%.*}"
+    dest="./processed/"$filename".mp4"
+    echo "Beginning $file to output $dest"
+    ffmpeg -i "$file" -y -max_muxing_queue_size 9999 "$dest" && mv "$file" "./del"
+    echo "Finished $file to output $dest"
+done
