@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Copy but will always ask to overwrite if there are conflicting names
+
+/usr/bin/cp -vi "$@" && l

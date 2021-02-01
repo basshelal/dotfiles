@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Moves a video and its associated jpg vcs image into a directory for
+#  each video in the current directory
+
 # use nullglob in case there are no matching files
 shopt -s nullglob
 
@@ -17,5 +20,3 @@ for index in ${!files[*]}; do
 done
 
 echo "Finished!"
-
-# for dir in */; do pushd "$dir"; folderize; popd; done

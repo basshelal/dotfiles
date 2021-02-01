@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Launch default terminal application into current working directory
+
+$TERMINAL --working-directory "$PWD" &>/dev/null 2>/dev/null &
+disown

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [[ ! -z $(command -v apt) ]]; then
+    sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y
+fi
+
+if [[ ! -z $(command -v flatpak) ]]; then
+    flatpak update -y
+fi

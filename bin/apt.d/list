@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [[ ! -z $(command -v apt) ]]; then
+    echo "apt packages:"
+    sudo apt list --installed "$@"
+    newline
+fi
+
+if [[ ! -z $(command -v flatpak) ]]; then
+    echo "flatpak packages"
+    flatpak list "$@"
+    newline
+fi

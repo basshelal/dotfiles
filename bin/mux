@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Mux all videos of a specific format into an x264 mp4,
+#  the first argument is the format of the files to mux
+
 type="$1"
 
 mkdir -p ./processed

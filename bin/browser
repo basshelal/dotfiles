@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-echo "$*"
+# Launch default web browser with the passed in args
 
-google-chrome-stable "$*"
+$BROWSER "$*"

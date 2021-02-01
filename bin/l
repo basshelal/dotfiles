@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Better ls, shows colors, all files and a total item count
+
+ls --color -CAF "$@" &&
+    (
+        newline
+        echo "total: $(cnt "$@")"
+    )

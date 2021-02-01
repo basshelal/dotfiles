@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Count number of items in a dir including hidden files
+
+echo "$(ls -A "$@" | lc)"

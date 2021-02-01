@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Show total disk usage of dir in human readable format
+
+du -ch "$@" | grep total

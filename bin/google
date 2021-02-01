@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
+# Google search from the terminal
+
 echo "Google Searching:"
 echo "$*"
 
-google-chrome-stable "https://www.google.com/search?&q=$*" &>/dev/null
+browser "https://www.google.com/search?&q=$*" &>/dev/null

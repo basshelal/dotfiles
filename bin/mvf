@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Move but will force and overwrite name conflicting files, use with caution
+
+/usr/bin/mv -vf "$@" && l

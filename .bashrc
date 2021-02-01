@@ -102,89 +102,37 @@ if ! shopt -oq posix; then
     fi
 fi
 
-isDeb() { command -v apt; }
-isArch() { command -v pacman; }
-hasFlatpak() { command -v flatpak; }
-printPlatform() {
-    if [[ ! -z $(isDeb) ]]; then echo "Debian"; fi
-    if [[ ! -z $(isArch) ]]; then echo "Arch"; fi
-}
-l() {
-    ls -aAF "$@" && cnt "$@"
-}
 d() {
-    cd "$@" && l
+    pushd "$@" >/dev/null && l
 }
-f() {
-    nautilus "$PWD" &>/dev/null 2>/dev/null &
-    disown
-}
-t() {
-    alacritty --working-directory $PWD &>/dev/null 2>/dev/null &
-    disown
-}
-p() {
-    disown
-}
-mkfl() {
-    dir="$(pwd)/$(dirname "$*")"
-    fl="$(pwd)/"$*""
-    mkdir -p "$dir" && touch "$fl" && d "$dir"
-}
-del() {
-    trash-put "$@" && l
-}
-alias move='/usr/bin/mv'
-mv() {
-    move -vn "$@" && l
-}
-upgrade() {
-    if [[ ! -z $(isDeb) ]]; then
-        sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y
-    fi
-    if [[ ! -z $(hasFlatpak) ]]; then
-        flatpak update -y
-    fi
-}
-install() {
-    if [ $# -eq 0 ]; then
-        echo-error "Error: Nothing to install"
-        return
-    fi
-    if [[ ! -z $(isDeb) ]]; then
-        sudo apt install "$@" -y
-    fi
-}
-remove() {
-    if [ $# -eq 0 ]; then
-        echo-error "Error: Nothing to remove"
-        return
-    fi
-    if [[ ! -z $(isDeb) ]]; then
-        sudo apt purge "$@" -y && sudo apt autoremove -y
-    fi
-}
-search() {
-    echo "apt packages:"
-    sudo apt search "$*"
-    newline
-    echo "flatpak packages"
-    flatpak search "$*"
-}
-list() {
-    echo "apt packages:"
-    sudo apt list "$@"
-    newline
-    echo "flatpak packages"
-    flatpak list "$@"
+s() {
+    popd >/dev/null && l
 }
 mkdr() {
     mkdir -p "$*" && d "$*"
 }
-myip() {
-    curl ifconfig.me
-    newline
+mkfl() {
+    if [[ ! -e "$*" ]]; then
+        dir="$(pwd)/$(dirname "$*")"
+        fl="$(pwd)/"$*""
+        mkdir -p "$dir" && touch "$fl" && d "$dir"
+    else
+        echo-error "$* already exists"
+        return -1
+    fi
 }
+mkscript() {
+    fl="$(pwd)/"$*""
+    mkfl "$*" && (
+        chmod +x "$fl"
+        echo "#!/usr/bin/env bash" >"$fl"
+        open "$fl"
+    )
+}
+alias i='install'
+alias r='remove'
+alias autoremove='sudo apt autoremove'
+
 alias vpn='nordvpn'
 vpnc() {
     vpn c
@@ -194,19 +142,9 @@ vpnd() {
     vpn d
     myip
 }
-vpnr() {
-    myip
-    vpnd
-    sleep 1s
-    vpnc
-}
-cnt() {
-    echo "----------------"
-    echo "total: $(ls -A "$@" | wc -l)"
-}
 
 # terminal
-alias c='clear'
+alias c='clear -x'
 alias x='exit'
 
 # home dirs
@@ -228,45 +166,11 @@ alias .....='d ../../../../'
 alias .5='d ../../../../../'
 alias ......='d ../../../../../'
 
-# git
-commit() {
-    git add .
-    git commit -m "$*"
-}
-push() {
-    git push -u origin master
-}
-pull() {
-    git pull origin master
-}
-commit-push() {
-    commit "$*" && push
-}
-
-# packages
-alias i='install'
-alias r='remove'
-alias autoremove='sudo apt autoremove'
-
 # power
 alias reboot='sudo reboot'
 alias shutdown='sudo shutdown'
 
-# ytdl
-alias ytdl='youtube-dl -i'
-alias ytdlu='sudo youtube-dl -U'
-alias ytdlmp3='youtube-dl -i --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail -o "~/Music/%(title)s-%(creator)s.%(ext)s" --cookies ~/Documents/youtube.com-cookies.txt'
-alias ytdlflac='youtube-dl -i --extract-audio --audio-format flac --audio-quality 0 -o "~/Music/%(title)s-%(creator)s.%(ext)s" --cookies ~/Documents/youtube.com-cookies.txt'
-ytdlq() {
-    youtube-dl -i -q "$@" &>/dev/null 2>/dev/null &
-    disown
-}
 alias y='ytdlq'
-
-alias psa='ps -A'
-
-alias cp='cp -iv'
-alias cpf='yes | cp -f'
 
 NOTES_DIR=~/docs/notes/
 
@@ -280,15 +184,15 @@ notes() {
     l $NOTES_DIR
 }
 
-dut() {
-    du -ch "$@" | grep total
+addPath() {
+    export PATH="$*:$PATH"
 }
 
-mkscript() {
-    fl="$(pwd)/"$*""
-    mkfl "$*"
-    chmod +x "$fl"
-    echo "#!/usr/bin/env bash" >"$fl"
-}
+addPath "$HOME/bin"
+addPath "$HOME/bin/apt.d"
+addPath "$HOME/bin/git.d"
+addPath "$HOME/bin/ytdl.d"
 
-export PATH="$HOME/bin:$PATH"
+export TERMINAL="alacritty"
+export FILE_MANAGER="nautilus"
+export BROWSER="google-chrome-stable"

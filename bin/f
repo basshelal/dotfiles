@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Launch default file manager into the current working directory
+
+$FILE_MANAGER "$PWD" &>/dev/null 2>/dev/null &
+disown

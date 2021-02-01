@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
+# Like /usr/bin/watch but allows for bash scripting including commands from .bashrc
+
 watch bash -i -c \""$*"\"

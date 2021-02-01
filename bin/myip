@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Print public ip address
+
+curl ifconfig.me
+newline

@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+# Moves all files in recursive subdirectories into current directory
+
 for file in $(find); do
     if [[ -f "$file" ]]; then
-        mv -vn "$file" "./"
+        mv "$file" "./"
     fi
 done

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+youtube-dl -i -q "$@" &>/dev/null 2>/dev/null &
+disown

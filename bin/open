@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Open files in their respective default applications
+
 for file in "$@"; do
     xdg-open "$file" &>/dev/null 2>/dev/null &
     disown

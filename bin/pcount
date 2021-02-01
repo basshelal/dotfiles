@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
+# Process count of passed in args
+
 ps -A | grep "$*" | lc
